@@ -8,6 +8,7 @@ Sandbox for playing with k8s
     * [Deployments history](#deployments-history)
     * [Why use k8s](#why-use-k8s)
     * [What k8s is not](#what-k8s-is-not)
+- [Kubernetes cluter](#kubernetes-cluster)
 
 
 # Kubernetes overview
@@ -47,6 +48,10 @@ Containers have become popular because they provide extra benefits, such as:
 * Resource isolation: predictable application performance.
 * Resource utilization: high efficiency and density.
 
+On a very high level of abstraction k8s architecture is described below (again this is high level abstraction):
+
+![k8s-1](https://github.com/rgederin/k8s-sandbox/blob/master/img/k8s-1.png)
+
 ## Why use k8s
 
 Containers are a good way to bundle and run your applications. In a production environment, you need to manage the containers that run the applications and ensure that there is no downtime. For example, if a container goes down, another container needs to start. Wouldn't it be easier if this behavior was handled by a system?
@@ -61,6 +66,8 @@ That's how Kubernetes comes to the rescue! Kubernetes provides you with a framew
 * Automatic bin packing You provide Kubernetes with a cluster of nodes that it can use to run containerized tasks. You tell Kubernetes how much CPU and memory (RAM) each container needs. Kubernetes can fit containers onto your nodes to make the best use of your resources.
 * Self-healing Kubernetes restarts containers that fail, replaces containers, kills containers that don't respond to your user-defined health check, and doesn't advertise them to clients until they are ready to serve.
 * Secret and configuration management Kubernetes lets you store and manage sensitive information, such as passwords, OAuth tokens, and SSH keys. You can deploy and update secrets and application configuration without rebuilding your container images, and without exposing secrets in your stack configuration.
+
+![k8s-2](https://github.com/rgederin/k8s-sandbox/blob/master/img/k8s-2.png)
 
 ## What k8s is not
 
@@ -78,3 +85,12 @@ Kubernetes is not a traditional, all-inclusive PaaS (Platform as a Service) syst
 * Does not provide nor mandate a configuration language/system (for example, Jsonnet). It provides a declarative API that may be targeted by arbitrary forms of declarative specifications.
 * Does not provide nor adopt any comprehensive machine configuration, maintenance, management, or self-healing systems.
 * Additionally, Kubernetes is not a mere orchestration system. In fact, it eliminates the need for orchestration. The technical definition of orchestration is execution of a defined workflow: first do A, then B, then C. In contrast, Kubernetes comprises a set of independent, composable control processes that continuously drive the current state towards the provided desired state. It shouldn't matter how you get from A to C. Centralized control is also not required. This results in a system that is easier to use and more powerful, robust, resilient, and extensible.
+
+# Kubernetes cluter
+
+When you deploy Kubernetes, you get a cluster.
+
+A Kubernetes cluster consists of a set of worker machines, called nodes, that run containerized applications and one or several master nodes which are controls k8s cluster. Every cluster has at least one worker node.
+
+![k8s-arch](https://github.com/rgederin/k8s-sandbox/blob/master/img/k8s-arch.png)
+
