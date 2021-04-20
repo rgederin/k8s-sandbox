@@ -13,6 +13,9 @@ Sandbox for playing with k8s
     * [K8s worker node components](#k8s-worker-node-components)
     * [Kubectl](#kubectl)
     * [Basic flow](#basic-flow)
+- [Self-Hosting Kubernetes or Managed Kubernetes Services](#self-hosting-kubernetes-or-managed-kubernetes-services)
+    * [Self-Hosting k8s](#self-hosting-k8s)
+    * [Managed Kubernetes Services](#managed-kubernetes-services)
 
 
 # Kubernetes overview
@@ -183,3 +186,54 @@ Lets review pod creation flow using kubectl, this what happens:
 9. Kubelet talks to the Docker daemon using the API over the Docker socket to create the container.
 10. Kubelet updates the pod status to the API Server.
 11. API Server persists the new state in etcd.
+
+# Self-Hosting Kubernetes or Managed Kubernetes Services
+
+The most important decision facing anyone who’s considering running production workloads in Kubernetes is buy or build? Should you run your own clusters, or pay someone else to run them? Let’s look at some of the options.
+
+**General recommendations from most of information sources is to go with Managed K8S services. With the run less software principles in mind, it is recommend that you outsource your Kubernetes cluster operations to a managed service. Installing, configuring, maintaining, securing, upgrading, and making your Kubernetes cluster reliable is undifferentiated heavy lifting, so it makes sense for almost all businesses not to do it themselves**
+
+## Self-Hosting k8s
+
+The most basic choice of all is self-hosted Kubernetes. By self-hosted we mean that you, personally, or a team in your organization, install and configure Kubernetes, on machines that you own or control, just as you might do with any other software that you use, such as Redis, PostgreSQL, or Nginx.
+
+This is the option that gives you the maximum flexibility and control. You can decide what versions of Kubernetes to run, what options and features are enabled, when and whether to upgrade clusters, and so on. But there are some significant downsides
+
+The self-hosted option also requires the maximum resources, in terms of people, skills, engineering time, maintenance, and troubleshooting. Just setting up a working Kubernetes cluster is pretty simple, but that’s a long way from a cluster that’s ready for production. You need to consider at least the following questions:
+
+* Is the control plane highly available? That is, if a master node goes down or becomes unresponsive, does your cluster still work? Can you still deploy or update apps? Will your running applications still be fault-tolerant without the control plane?
+* Is your pool of worker nodes highly available? That is, if an outage should take down several worker nodes, or even a whole cloud availability zone, will your workloads stop running? Will your cluster keep working? Will it be able to automatically provision new nodes to heal itself, or will it require manual intervention?
+* Is your cluster set up securely? Do its internal components communicate using TLS encryption and trusted certificates? Do users and applications have minimal rights and permissions for cluster operations? Are container security defaults set properly? Do nodes have unnecessary access to control plane components? Is access to the underlying etcd database properly controlled and authenticated?
+* Are all services in your cluster secure? If they’re accessible from the internet, are they properly authenticated and authorized? Is access to the cluster API strictly limited?
+* Is your cluster conformant? Does it meet the standards for Kubernetes clusters defined by the Cloud Native Computing Foundation?
+* Are your cluster nodes fully config-managed, rather than being set up by impera‐ tive shell scripts and then left alone? The operating system and kernel on each node needs to be updated, have security patches applied, and so on.
+* Is the data in your cluster properly backed up, including any persistent storage? What is your restore process? How often do you test restores?
+* Once you have a working cluster, how do you maintain it over time? How do you provision new nodes? Roll out config changes to existing nodes? Roll out Kuber‐ netes updates? Scale in response to demand? Enforce policies?
+
+Distributed systems engineer and writer Cindy Sridharan has estimated that it takes around a million dollars in engineer salary to get Kubernetes up and running in a production configuration from scratch (“And you still might not get there”). That figure should give any technical leader food for thought when considering self-hosted Kubernetes.
+
+## Managed Kubernetes Services
+
+Managed Kubernetes services relieve you of almost all the administration overhead of setting up and running Kubernetes clusters, particularly the control plane. Effectively, a managed service means you pay for someone else (such as Google) to run the cluster for you.
+
+### Google Kubernetes Engine (GKE)
+
+As you’d expect from the originators of Kubernetes, Google offers a fully managed Kubernetes service that is completely integrated with the Google Cloud Platform. Just choose the number of worker nodes, and click a button in the GCP web console to create a cluster, or use the Deployment Manager tool to provision one. Within a few minutes, your cluster will be ready to use.
+
+Google takes care of monitoring and replacing failed nodes, auto-applying security patches, and high availability for the control plane and etcd. You can set your nodes to auto-upgrade to the latest version of Kubernetes, during a maintenance window of your choice.
+
+### Amazon Elastic Container Service for Kubernetes (EKS)
+
+Amazon has also been providing managed container cluster services for a long time, but until very recently the only option was Elastic Container Service (ECS), Amazon’s proprietary technology.
+While perfectly usable, ECS is not as powerful or flexible as Kubernetes, and evidently even Amazon has decided that the future is Kubernetes, with the launch of Elastic Container Service for Kubernetes (EKS). (Yes, EKS ought to stand for Elastic Kubernetes Service, but it doesn’t.)
+
+It’s not quite as seamless an experience as Google Kubernetes Engine, so be prepared to do more of the setup work yourself. Also, unlike some competitors, EKS charges you for the master nodes as well as the other cluster infrastructure. This makes it more expensive, for a given cluster size, than either Google or Microsoft’s managed Kubernetes service.
+
+If you already have infrastructure in AWS, or run containerized workloads in the older ECS service that you want to move to Kubernetes, then EKS is a sensible choice. As the newest entry into the managed Kubernetes marketplace, though, it has some distance to go to catch up to the Google and Microsoft offerings.
+
+### Azure Kubernetes Service (AKS)
+
+Although Microsoft came a little later to the cloud business than Amazon or Google, they’re catching up fast. Azure Kubernetes Service (AKS) offers most of the features of its competitors, such as Google’s GKE. You can create clusters from the web interface or using the Azure az command-line tool.
+
+As with GKE and EKS, you have no access to the master nodes, which are managed internally, and your billing is based on the number of worker nodes in your cluster.
+
