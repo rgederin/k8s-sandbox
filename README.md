@@ -8,7 +8,8 @@ Sandbox for playing with k8s
     * [Deployments history](#deployments-history)
     * [Why use k8s](#why-use-k8s)
     * [What k8s is not](#what-k8s-is-not)
-- [Kubernetes cluter](#kubernetes-cluster)
+- [Kubernetes cluster](#kubernetes-cluster)
+    * [K8s master components](#k8s-master-components)
 
 
 # Kubernetes overview
@@ -86,11 +87,45 @@ Kubernetes is not a traditional, all-inclusive PaaS (Platform as a Service) syst
 * Does not provide nor adopt any comprehensive machine configuration, maintenance, management, or self-healing systems.
 * Additionally, Kubernetes is not a mere orchestration system. In fact, it eliminates the need for orchestration. The technical definition of orchestration is execution of a defined workflow: first do A, then B, then C. In contrast, Kubernetes comprises a set of independent, composable control processes that continuously drive the current state towards the provided desired state. It shouldn't matter how you get from A to C. Centralized control is also not required. This results in a system that is easier to use and more powerful, robust, resilient, and extensible.
 
-# Kubernetes cluter
+# Kubernetes cluster
 
 When you deploy Kubernetes, you get a cluster.
 
 A Kubernetes cluster consists of a set of worker machines, called nodes, that run containerized applications and one or several master nodes which are controls k8s cluster. Every cluster has at least one worker node.
 
 ![k8s-arch](https://github.com/rgederin/k8s-sandbox/blob/master/img/k8s-arch.png)
+
+## K8s master components
+
+Master Node is called the **Control Plane** and it has 4 further things, namely API Server, etcd, Scheduler and Controller Manager.
+
+### API Server
+
+The API server is a component of the Kubernetes control plane that exposes the Kubernetes API. The API server is the front end for the Kubernetes control plane. This enables all the communication b/w API, we are going to talk to Kube API Server only. It takes the request and sends it to other services.
+We can use Kubectl CLI to manage the Kubernetes Cluster. Kubectl sends the request to the API server and then API Server responds back. 
+The main implementation of a Kubernetes API server is `kube-apiserver`.
+
+![k8s-api](https://github.com/rgederin/k8s-sandbox/blob/master/img/k8s-api.png)
+
+### etcd
+
+Consistent and highly-available key value store used as Kubernetes' backing store for all cluster data. Kube API Server stores all the information in Etcd and other services also reads and store the information in the Etcd storage. It should be backed up regularly.
+It stores the current state of everything in the cluster here at the ETCD server
+
+![etcd](https://github.com/rgederin/k8s-sandbox/blob/master/img/etcd.png)
+
+### Kube Scheduler
+
+It picks up the container and puts it on the right node based on different factors. Control plane component that watches for newly created Pods with no assigned node, and selects a node for them to run on.
+
+![scheduler](https://github.com/rgederin/k8s-sandbox/blob/master/img/scheduler.png)
+
+### Controller Manager
+
+Control Plane component that runs controller processes.
+Logically, each controller is a separate process, but to reduce complexity, they are all compiled into a single binary and run in a single process.
+
+![controller](https://github.com/rgederin/k8s-sandbox/blob/master/img/controller.png)
+
+
 
