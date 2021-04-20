@@ -22,7 +22,7 @@ Google open-sourced the Kubernetes project in 2014. Kubernetes combines over 15 
 
 ## Deployments history
 
-![history](https://github.com/rgederin/zookeeper-integration/blob/master/img/history.png)
+![history](https://github.com/rgederin/k8s-sandbox/blob/master/img/history.png)
 
 **Traditional deployment era:** Early on, organizations ran applications on physical servers. There was no way to define resource boundaries for applications in a physical server, and this caused resource allocation issues. For example, if multiple applications run on a physical server, there can be instances where one application would take up most of the resources, and as a result, the other applications would underperform. A solution for this would be to run each application on a different physical server. But this did not scale as resources were underutilized, and it was expensive for organizations to maintain many physical servers.
 
