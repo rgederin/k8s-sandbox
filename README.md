@@ -17,6 +17,7 @@ Sandbox for playing with k8s
     * [Self-Hosting k8s](#self-hosting-k8s)
     * [Managed Kubernetes Services](#managed-kubernetes-services)
 - [Running k8s locally](#running-k8s-locally)
+- [Run first container on k8s](#run-first-container-on-k8s)
 
 
 # Kubernetes overview
@@ -259,3 +260,13 @@ When Kubernetes is enabled and running, an additional status bar item displays a
 The status of Kubernetes shows in the Docker menu and the context points to docker-desktop.
 
 ![kube-context](https://github.com/rgederin/k8s-sandbox/blob/master/img/kube-context.png)
+
+# Run first container on k8s
+
+Lets compare docker-compose and k8s:
+
+![comp](https://github.com/rgederin/k8s-sandbox/blob/master/img/comp.png)
+
+And below you could find steps which are required to run simple container on local k8s cluster:
+
+![comp2](https://github.com/rgederin/k8s-sandbox/blob/master/img/comp2.png)
