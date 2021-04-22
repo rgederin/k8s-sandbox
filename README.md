@@ -16,6 +16,7 @@ Sandbox for playing with k8s
 - [Self-Hosting Kubernetes or Managed Kubernetes Services](#self-hosting-kubernetes-or-managed-kubernetes-services)
     * [Self-Hosting k8s](#self-hosting-k8s)
     * [Managed Kubernetes Services](#managed-kubernetes-services)
+- [Running k8s locally](#running-k8s-locally)
 
 
 # Kubernetes overview
@@ -237,3 +238,24 @@ Although Microsoft came a little later to the cloud business than Amazon or Goog
 
 As with GKE and EKS, you have no access to the master nodes, which are managed internally, and your billing is based on the number of worker nodes in your cluster.
 
+# Running k8s locally
+
+**Docker Desktop** includes a standalone Kubernetes server and client, as well as Docker CLI integration that runs on your machine. The Kubernetes server runs locally within your Docker instance, is not configurable, and is a single-node cluster.
+
+The Kubernetes server runs within a Docker container on your local system, and is only for local testing. Enabling Kubernetes allows you to deploy your workloads in parallel, on Kubernetes, Swarm, and as standalone containers. Enabling or disabling the Kubernetes server does not affect your other workloads.
+
+To enable Kubernetes support and install a standalone instance of Kubernetes running as a Docker container, go to Preferences > Kubernetes and then click Enable Kubernetes.
+
+To set Kubernetes as the default orchestrator, select Deploy Docker Stacks to Kubernetes by default.
+
+By default, Kubernetes containers are hidden from commands like docker service ls, because managing them manually is not supported. To see these internal containers, select Show system containers (advanced). Most users do not need this option.
+
+Click Apply & Restart to save the settings and then click Install to confirm. This instantiates images required to run the Kubernetes server as containers, and installs the /usr/local/bin/kubectl command on your machine.
+
+![kube-enable](https://github.com/rgederin/k8s-sandbox/blob/master/img/kube-enable.png)
+
+When Kubernetes is enabled and running, an additional status bar item displays at the bottom right of the Docker Desktop Settings dialog.
+
+The status of Kubernetes shows in the Docker menu and the context points to docker-desktop.
+
+![kube-context](https://github.com/rgederin/k8s-sandbox/blob/master/img/kube-context.png)
