@@ -270,3 +270,88 @@ Lets compare docker-compose and k8s:
 And below you could find steps which are required to run simple container on local k8s cluster:
 
 ![comp2](https://github.com/rgederin/k8s-sandbox/blob/master/img/comp2.png)
+
+### Dockerize simple React application
+
+In  [fib-client-k8s](https://github.com/rgederin/k8s-sandbox/blob/master/fib-client-k8s) folder you could find react application which is used for demo. Docker file for this application also including nginx for serving static content:
+
+```
+FROM node:alpine as builder
+WORKDIR '/app'
+COPY ./package.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx
+EXPOSE 3000
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/build /usr/share/nginx/html
+```
+
+Lets build docker image for this app and push it to Docker Hub:
+
+```
+docker build -t rgederin/fib-client-standalone-k8s .
+docker push rgederin/fib-client-standalone-k8s
+```
+
+After this image with this application will appear on Docker Hub
+
+![hub](https://github.com/rgederin/k8s-sandbox/blob/master/img/hub.png)
+
+### Config file for container creation
+
+In [k8s](https://github.com/rgederin/k8s-sandbox/blob/master/fib-client-k8s/k8s) folder you could find `fib-client-pod.yaml` which contains needful configuration:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fib-client-pod
+  labels:
+    component: web
+spec:
+  containers:
+    - name: fib-client
+      image: rgederin/fib-client-standalone-k8s
+      ports:
+        - containerPort: 3000
+```
+
+In order to deploy this configuration to the k8s we need to execute next command:
+
+```
+kubectl apply -f fib-client-pod.yaml
+```
+
+### Config file for networking creation
+
+In [k8s](https://github.com/rgederin/k8s-sandbox/blob/master/fib-client-k8s/k8s) folder you could find `fib-client-node-port.yaml` which contains needful configuration:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: fib-client-node-port
+  labels:
+    component: web
+spec:
+  type: NodePort
+  ports:
+    - port: 3050
+      targetPort: 3000
+      nodePort: 31515
+  selector:
+    component: web
+```
+
+In order to deploy this configuration to the k8s we need to execute next command:
+
+```
+kubectl apply -f fib-client-node-port.yaml
+```
+
+After this you could check `http://localhost:31515/` and should see:
+
+![ui](https://github.com/rgederin/k8s-sandbox/blob/master/img/ui.png)

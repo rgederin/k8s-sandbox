@@ -7,6 +7,6 @@ metadata:
 spec:
   containers:
     - name: fib-client
-      image: stephengrider/multi-client
+      image: rgederin/fib-client-standalone-k8s
       ports:
         - containerPort: 3000
