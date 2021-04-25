@@ -19,9 +19,9 @@ Sandbox for playing with k8s
 - [Running k8s locally](#running-k8s-locally)
 - [Run first container on k8s](#run-first-container-on-k8s)
 - [Kubernetes objects](#kubernetes-objects)
-    * [Pod](#pod)
-    * [Service](#service)
-
+- [Pods](#pods)
+- [Services](#services)
+- [Deployments](#deployments)
 
 # Kubernetes overview
 
@@ -434,7 +434,7 @@ In the .yaml file for the Kubernetes object you want to create, you'll need to s
 
 The precise format of the object spec is different for every Kubernetes object, and contains nested fields specific to that object. The Kubernetes API Reference can help you find the spec format for all of the objects you can create using Kubernetes. For example, the spec format for a Pod can be found in PodSpec v1 core, and the spec format for a Deployment can be found in DeploymentSpec v1 apps.
 
-## Pod
+# Pods
 
 Pods are the smallest deployable units of computing that you can create and manage in Kubernetes.
 
@@ -528,7 +528,7 @@ Each workload resource implements its own rules for handling changes to the Pod 
 
 On Nodes, the kubelet does not directly observe or manage any of the details around pod templates and updates; those details are abstracted away. That abstraction and separation of concerns simplifies system semantics, and makes it feasible to extend the cluster's behavior without changing existing code.
 
-## Service
+# Services
 
 An abstract way to expose an application running on a set of Pods as a network service.
 
@@ -601,4 +601,72 @@ Type values and their behaviors are:
 * `ExternalName`: Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.
 
 You can also use Ingress to expose your Service. Ingress is not a Service type, but it acts as the entry point for your cluster. It lets you consolidate your routing rules into a single resource as it can expose multiple services under the same IP address.
+
+# Deployments
+
+A Deployment provides declarative updates for Pods and ReplicaSets.
+
+You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate. You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.
+
+![dep1](https://github.com/rgederin/k8s-sandbox/blob/master/img/dep1.png) 
+
+![dep2](https://github.com/rgederin/k8s-sandbox/blob/master/img/dep2.png) 
+
+### Use cases
+
+The following are typical use cases for Deployments:
+
+* Create a Deployment to rollout a ReplicaSet. The ReplicaSet creates Pods in the background. Check the status of the rollout to see if it succeeds or not.
+* Declare the new state of the Pods by updating the PodTemplateSpec of the Deployment. A new ReplicaSet is created and the Deployment manages moving the Pods from the old ReplicaSet to the new one at a controlled rate. Each new ReplicaSet updates the revision of the Deployment.
+* Rollback to an earlier Deployment revision if the current state of the Deployment is not stable. Each rollback updates the revision of the Deployment.
+* Scale up the Deployment to facilitate more load.
+* Pause the Deployment to apply multiple fixes to its PodTemplateSpec and then resume it to start a new rollout.
+* Use the status of the Deployment as an indicator that a rollout has stuck.
+* Clean up older ReplicaSets that you don't need anymore.
+
+### Creating a Deployment
+
+The following is an example of a Deployment. It creates a ReplicaSet to bring up 1 Pod with `fib-client-standalone-k8s` image inside:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fib-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: fib-client
+          image: rgederin/fib-client-standalone-k8s
+          ports:
+            - containerPort: 3000
+```
+
+![dep3](https://github.com/rgederin/k8s-sandbox/blob/master/img/dep3.png) 
+
+In order to apply deployment we could use `kubectl apply -f` command
+
+### Deployment highlevel worflow
+
+Let's assume that we have cluster with 3 nodes and we want to apply new Deployment which will run 4 copies of `multi-worker` in Pods.
+
+![dep4](https://github.com/rgederin/k8s-sandbox/blob/master/img/dep4.png) 
+
+After this kube api server will understand that in cluster should be 4 pods and right now amount is 0:
+
+![dep5](https://github.com/rgederin/k8s-sandbox/blob/master/img/dep5.png) 
+
+After this Nodes will pull images from Dockerhub and will run needful amounts of containers (in pods)
+
+![dep6](https://github.com/rgederin/k8s-sandbox/blob/master/img/dep6.png) 
+
+
 
