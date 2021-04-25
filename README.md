@@ -544,4 +544,61 @@ Each Pod gets its own IP address, however in a Deployment, the set of Pods runni
 
 This leads to a problem: if some set of Pods (call them "backends") provides functionality to other Pods (call them "frontends") inside your cluster, how do the frontends find out and keep track of which IP address to connect to, so that the frontend can use the backend part of the workload?
 
-![service1](https://github.com/rgederin/k8s-sandbox/blob/master/img/service1.png) ![service2](https://github.com/rgederin/k8s-sandbox/blob/master/img/service2.png)
+![service1](https://github.com/rgederin/k8s-sandbox/blob/master/img/service1.png) 
+
+![service2](https://github.com/rgederin/k8s-sandbox/blob/master/img/service2.png)
+
+### Service resources
+
+In Kubernetes, a Service is an abstraction which defines a logical set of Pods and a policy by which to access them (sometimes this pattern is called a micro-service). The set of Pods targeted by a Service is usually determined by a `selector`.
+
+For example, consider a stateless image-processing backend which is running with 3 replicas. Those replicas are fungible—frontends do not care which backend they use. While the actual Pods that compose the backend set may change, the frontend clients should not need to be aware of that, nor should they need to keep track of the set of backends themselves.
+
+### Defining a Service 
+
+A Service in Kubernetes is a REST object, similar to a Pod. Like all of the REST objects, you can POST a Service definition to the API server to create a new instance. The name of a Service object must be a valid DNS label name.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: fib-client-node-port
+  labels:
+    component: web
+spec:
+  type: NodePort
+  ports:
+    - port: 3050
+      targetPort: 3000
+      nodePort: 31515
+  selector:
+    component: web
+```
+
+![service3](https://github.com/rgederin/k8s-sandbox/blob/master/img/service3.png) 
+
+A Service can map any incoming port to a targetPort. By default and for convenience, the targetPort is set to the same value as the port field.
+
+![service4](https://github.com/rgederin/k8s-sandbox/blob/master/img/service4.png) 
+
+Port definitions in Pods have names, and you can reference these names in the targetPort attribute of a Service. This works even if there is a mixture of Pods in the Service using a single configured name, with the same network protocol available via different port numbers. This offers a lot of flexibility for deploying and evolving your Services. For example, you can change the port numbers that Pods expose in the next version of your backend software, without breaking clients.
+
+The default protocol for Services is TCP; you can also use any other supported protocol.
+
+As many Services need to expose more than one port, Kubernetes supports multiple port definitions on a Service object. Each port definition can have the same protocol, or a different one.
+
+### Publishing Services (ServiceTypes)
+
+For some parts of your application (for example, frontends) you may want to expose a Service onto an external IP address, that's outside of your cluster.
+
+Kubernetes `ServiceTypes` allow you to specify what kind of Service you want. The default is `ClusterIP`.
+
+Type values and their behaviors are:
+
+* `ClusterIP`: Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default ServiceType.
+* `NodePort`: Exposes the Service on each Node's IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You'll be able to contact the NodePort Service, from outside the cluster, by requesting <NodeIP>:<NodePort>.
+* `LoadBalancer`: Exposes the Service externally using a cloud provider's load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.
+* `ExternalName`: Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.
+
+You can also use Ingress to expose your Service. Ingress is not a Service type, but it acts as the entry point for your cluster. It lets you consolidate your routing rules into a single resource as it can expose multiple services under the same IP address.
+
