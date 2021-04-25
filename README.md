@@ -465,7 +465,7 @@ Pods are designed to support multiple cooperating processes (as containers) that
 
 For example, you might have a container that acts as a web server for files in a shared volume, and a separate "sidecar" container that updates those files from a remote source, as in the following diagram:
 
-![pod2](https://github.com/rgederin/k8s-sandbox/blob/master/img/pod2.jpeg)
+![pod2](https://github.com/rgederin/k8s-sandbox/blob/master/img/pod2.png)
 
 
 Some Pods have init containers as well as app containers. Init containers run and complete before the app containers are started.
