@@ -19,7 +19,8 @@ Sandbox for playing with k8s
 - [Running k8s locally](#running-k8s-locally)
 - [Run first container on k8s](#run-first-container-on-k8s)
 - [Kubernetes objects](#kubernetes-objects)
-    * [Pods](#pods)
+    * [Pod](#pod)
+    * [Service](#service)
 
 
 # Kubernetes overview
@@ -433,7 +434,7 @@ In the .yaml file for the Kubernetes object you want to create, you'll need to s
 
 The precise format of the object spec is different for every Kubernetes object, and contains nested fields specific to that object. The Kubernetes API Reference can help you find the spec format for all of the objects you can create using Kubernetes. For example, the spec format for a Pod can be found in PodSpec v1 core, and the spec format for a Deployment can be found in DeploymentSpec v1 apps.
 
-## Pods
+## Pod
 
 Pods are the smallest deployable units of computing that you can create and manage in Kubernetes.
 
@@ -527,4 +528,20 @@ Each workload resource implements its own rules for handling changes to the Pod 
 
 On Nodes, the kubelet does not directly observe or manage any of the details around pod templates and updates; those details are abstracted away. That abstraction and separation of concerns simplifies system semantics, and makes it feasible to extend the cluster's behavior without changing existing code.
 
+## Service
 
+An abstract way to expose an application running on a set of Pods as a network service.
+
+With Kubernetes you don't need to modify your application to use an unfamiliar service discovery mechanism. Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them.
+
+![service](https://github.com/rgederin/k8s-sandbox/blob/master/img/service.png)
+
+### Motivation
+
+Kubernetes Pods are created and destroyed to match the state of your cluster. Pods are nonpermanent resources. If you use a Deployment to run your app, it can create and destroy Pods dynamically.
+
+Each Pod gets its own IP address, however in a Deployment, the set of Pods running in one moment in time could be different from the set of Pods running that application a moment later.
+
+This leads to a problem: if some set of Pods (call them "backends") provides functionality to other Pods (call them "frontends") inside your cluster, how do the frontends find out and keep track of which IP address to connect to, so that the frontend can use the backend part of the workload?
+
+![service1](https://github.com/rgederin/k8s-sandbox/blob/master/img/service1.png) ![service2](https://github.com/rgederin/k8s-sandbox/blob/master/img/service2.png)
