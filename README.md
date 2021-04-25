@@ -457,6 +457,8 @@ Pods in a Kubernetes cluster are used in two main ways:
 
 **Note:** Grouping multiple co-located and co-managed containers in a single Pod is a relatively advanced use case. You should use this pattern only in specific instances in which your containers are tightly coupled.
 
+![pod3](https://github.com/rgederin/k8s-sandbox/blob/master/img/pod3.png)
+
 Each Pod is meant to run a single instance of a given application. If you want to scale your application horizontally (to provide more overall resources by running more instances), you should use multiple Pods, one for each instance. In Kubernetes, this is typically referred to as replication. Replicated Pods are usually created and managed as a group by a workload resource and its controller.
 
 ### How Pods manage multiple containers 
@@ -467,8 +469,62 @@ For example, you might have a container that acts as a web server for files in a
 
 ![pod2](https://github.com/rgederin/k8s-sandbox/blob/master/img/pod2.png)
 
-
 Some Pods have init containers as well as app containers. Init containers run and complete before the app containers are started.
 
 Pods natively provide two kinds of shared resources for their constituent containers: networking and storage.
+
+### Working with Pods
+
+You'll rarely create individual Pods directly in Kubernetes—even singleton Pods. This is because Pods are designed as relatively ephemeral, disposable entities. When a Pod gets created (directly by you, or indirectly by a controller), the new Pod is scheduled to run on a Node in your cluster. The Pod remains on that node until the Pod finishes execution, the Pod object is deleted, the Pod is evicted for lack of resources, or the node fails.
+
+**Note:** Restarting a container in a Pod should not be confused with restarting a Pod. A Pod is not a process, but an environment for running container(s). A Pod persists until it is deleted.
+
+### Pods and controllers
+
+You can use workload resources to create and manage multiple Pods for you. A controller for the resource handles replication and rollout and automatic healing in case of Pod failure. For example, if a Node fails, a controller notices that Pods on that Node have stopped working and creates a replacement Pod. The scheduler places the replacement Pod onto a healthy Node.
+
+Here are some examples of workload resources that manage one or more Pods:
+
+* Deployment
+* StatefulSet
+* DaemonSet
+
+### Pod templates 
+
+Controllers for workload resources create Pods from a pod template and manage those Pods on your behalf.
+
+PodTemplates are specifications for creating Pods, and are included in workload resources such as Deployments, Jobs, and DaemonSets.
+
+Each controller for a workload resource uses the PodTemplate inside the workload object to make actual Pods. `The PodTemplate is part of the desired state of whatever workload resource you used to run your app.`
+
+Below is example of Deployment manifest:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fib-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: fib-client
+          image: rgederin/fib-client-standalone-k8s
+          ports:
+            - containerPort: 3000
+ ```           
+
+Modifying the pod template or switching to a new pod template has no direct effect on the Pods that already exist. If you change the pod template for a workload resource, that resource needs to create replacement Pods that use the updated template.
+
+Each workload resource implements its own rules for handling changes to the Pod template.
+
+On Nodes, the kubelet does not directly observe or manage any of the details around pod templates and updates; those details are abstracted away. That abstraction and separation of concerns simplifies system semantics, and makes it feasible to extend the cluster's behavior without changing existing code.
+
 
