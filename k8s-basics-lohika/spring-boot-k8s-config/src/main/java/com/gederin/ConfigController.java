@@ -11,11 +11,11 @@ import lombok.Data;
 @RequestMapping("/api")
 public class ConfigController {
 
-    @Value("${secrets.username}")
-    private String secretsUsername;
+    @Value("${database.host}")
+    private String host;
 
-    @Value("${secrets.password}")
-    private String secretsPassword;
+    @Value("${database.port}")
+    private String port;
 
     @GetMapping("hello")
     public String hello() {
@@ -26,16 +26,32 @@ public class ConfigController {
     public SecretsResponse secrets() {
         SecretsResponse secretsResponse = new SecretsResponse();
 
-        secretsResponse.username = secretsUsername;
-        secretsResponse.password = secretsPassword;
+        secretsResponse.username = System.getenv().getOrDefault("SECRETS_USERNAME", "default-username");
+        secretsResponse.password = System.getenv().getOrDefault("SECRETS_PASSWORD", "default-password");
 
         return secretsResponse;
+    }
+
+    @GetMapping("configMap")
+    public ConfigMapResponse configMap() {
+        ConfigMapResponse configMapResponse = new ConfigMapResponse();
+
+        configMapResponse.host = host;
+        configMapResponse.port = port;
+
+        return configMapResponse;
     }
 
     @Data
     private class SecretsResponse {
         private String username;
         private String password;
+    }
+
+    @Data
+    private class ConfigMapResponse {
+        private String host;
+        private String port;
     }
 }
 

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spring-boot-configmap-v1
+data:
+  DATABASE_HOST: k8s-v1-database-host
+  DATABASE_PORT: k8s-v1-database-port

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: spring-app
+  template:
+    metadata:
+      labels:
+        component: spring-app
+    spec:
+      containers:
+        - name: spring-app
+          image: rgederin/spring-boot-k8s-config:0.0.3-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SECRETS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: spring-app-secret
+                  key: SECRETS_USERNAME
+            - name: SECRETS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spring-app-secret
+                  key: SECRETS_PASSWORD
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: spring-boot-configmap-v1
+                  key: DATABASE_HOST
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: spring-boot-configmap-v1
+                  key: DATABASE_PORT
