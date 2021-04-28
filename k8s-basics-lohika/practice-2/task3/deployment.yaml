@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: spring-app-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       component: spring-app
@@ -31,10 +31,10 @@ spec:
             - name: DATABASE_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: spring-boot-configmap-v1
+                  name: spring-boot-configmap-v2
                   key: DATABASE_HOST
             - name: DATABASE_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: spring-boot-configmap-v1
+                  name: spring-boot-configmap-v2
                   key: DATABASE_PORT
