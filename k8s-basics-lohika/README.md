@@ -56,3 +56,63 @@ data:
 ```
 
 ![secret1](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/secret1.png) 
+
+Now lets create Deployment which will use created Secret
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: spring-app
+  template:
+    metadata:
+      labels:
+        component: spring-app
+    spec:
+      containers:
+        - name: spring-app
+          image: rgederin/spring-boot-k8s-config:0.0.1-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SECRETS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: spring-app-secret
+                  key: SECRETS_USERNAME
+            - name: SECRETS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spring-app-secret
+                  key: SECRETS_PASSWORD
+```
+
+![secret2](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/secret2.png) 
+
+And finally lets expose pod using Service (NodePort) object:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-service
+  labels:
+    component: spring-app
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 31515
+  selector:
+    component: spring-app
+```
+
+After this we could access our application using exposed NodePort and check that our secrets were successfully passed to our application:
+
+![secret3](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/secret3.png) 
