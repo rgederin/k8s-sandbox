@@ -431,4 +431,10 @@ Access application using external ip
 
 ![t7](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t7.png)
 
+Remove namespace
 
+```
+ODL1610003:task3 rgederin$ kubectl delete namespaces/lb-namespace
+namespace "lb-namespace" deleted
+ODL1610003:task3 rgederin$ 
+```
