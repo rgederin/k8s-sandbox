@@ -377,3 +377,58 @@ kubectl delete namespaces/resources-namespace
 
 ![t4](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t4.png)
 
+### Task #2 - load balancer service type
+
+Create new namespace
+
+```
+kubectl create namespace lb-namespace
+```
+
+Create new Deployment object with two replicas
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: spring-app
+  template:
+    metadata:
+      labels:
+        component: spring-app
+    spec:
+      containers:
+        - name: spring-app
+          image: rgederin/spring-boot-k8s-config:0.0.4-SNAPSHOT
+          ports:
+            - containerPort: 8080
+```
+
+Apply deployment in namespace
+
+```
+kubectl apply -f deployment.yaml --namespace=lb-namespace
+```
+
+![t5](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t5.png)
+
+Create load balancer service in order to expose our pods:
+
+```
+kubectl expose deployment spring-app-deployment --type=LoadBalancer --name=spring-app-service --namespace=lb-namespace
+
+```
+
+![t6](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t6.png)
+
+
+Access application using external ip
+
+![t7](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t7.png)
+
+
