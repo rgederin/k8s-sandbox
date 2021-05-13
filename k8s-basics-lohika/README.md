@@ -538,9 +538,9 @@ spec:
 
 Results are below
 
-![t10](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t9.png)
+![t10](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t10.png)
 
-![t11](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t9.png)
+![t11](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t11.png)
 
-![t12](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t9.png)
+![t12](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t12.png)
 
