@@ -500,3 +500,47 @@ Delete pvc namespace:
 ODL1610003:task4 rgederin$ kubectl delete namespace/pvc-namespace
 namespace "pvc-namespace" deleteds
 ```
+
+### Task 5 - quotas
+
+Create simple cpu and mem quota and pod
+
+```
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mem-cpu-quota
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 5Gi
+```
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quota-mem-cpu-pod
+spec:
+  containers:
+    - name: quota-mem-cpu-ctr
+      image: nginx
+      resources:
+        limits:
+          memory: "800Mi"
+          cpu: "800m"
+        requests:
+          memory: "600Mi"
+          cpu: "400m"
+```
+
+Results are below
+
+![t10](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t9.png)
+
+![t11](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t9.png)
+
+![t12](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t9.png)
+
