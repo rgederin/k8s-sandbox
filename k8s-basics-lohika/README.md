@@ -1,9 +1,9 @@
 # Table of Content
 
-- [Practice assigment #2](#practice-assigment-#2)
-- [Practice assigment #3](#practice-assigment-#3)
+- [Practice assigment 2](#practice-assigment-2)
+- [Practice assigment 3](#practice-assigment-3)
 
-# Practice assigment #2
+# Practice assigment 2
 
 In order to get some practice with passing secrets and config maps from k8s to Spring boot application I created simple app with several endpoints, dockerized it and upload image to Docker Hub.
 
