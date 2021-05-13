@@ -1,3 +1,8 @@
+# Table of Content
+
+- [Practice assigment #2](#practice-assigment-#2)
+- [Practice assigment #3](#practice-assigment-#3)
+
 # Practice assigment #2
 
 In order to get some practice with passing secrets and config maps from k8s to Spring boot application I created simple app with several endpoints, dockerized it and upload image to Docker Hub.
@@ -290,3 +295,85 @@ Ok, lets now check deployments history and roll back to deployment with first co
 ![d7](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/d7.png)
 
 ![d8](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/d8.png)
+
+
+# Practice assigment #3
+
+### Task #1 - GKE cluster creation
+
+I created personal GKE cluster for playing with k8s:
+
+![g1](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/g1.png)
+
+### Task #2 - resources
+
+Create namespace for playing with resources
+
+```
+kubectl create namespace resources-namespace
+```
+
+![t1](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t1.png)
+
+
+Lets create LimitRange object
+
+```
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-limit-range
+spec:
+  limits:
+    - max:
+        cpu: "600m"
+      min:
+        cpu: "200m"
+      type: Container
+```
+
+Now lets apply created limit range to newly created namespace and check it
+
+```
+kubectl apply -f limit-range.yaml --namespace=resources-namespace
+kubectl get limitrange cpu-limit-range --output=yaml --namespace=resources-namespace
+```
+
+![t2](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t2.png)
+
+Lets now create overlimit pod as it requested in assigment:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: overlimit-pod
+spec:
+  containers:
+    - name: overlimit-pod-container
+      image: nginx
+      resources:
+        limits:
+          cpu: "800m"
+        requests:
+          cpu: "500m"
+```
+
+And lets apply this:
+
+```
+kubectl apply -f pod.yaml --namespace=resources-namespace
+```
+
+It fails (as expected):
+
+![t3](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t3.png)
+
+Lets remove `resources-namespace` in order to clean up our cluster.
+
+```
+kubectl delete namespaces/resources-namespace
+```
+
+![t4](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t4.png)
+
