@@ -377,7 +377,7 @@ kubectl delete namespaces/resources-namespace
 
 ![t4](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t4.png)
 
-### Task #2 - load balancer service type
+### Task #3 - load balancer service type
 
 Create new namespace
 
@@ -437,4 +437,66 @@ Remove namespace
 ODL1610003:task3 rgederin$ kubectl delete namespaces/lb-namespace
 namespace "lb-namespace" deleted
 ODL1610003:task3 rgederin$ 
+```
+
+### Task 4 - pvc
+
+Create namespace, prepare and deploy pvc (standard class is default one):
+
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-persistent-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+```
+
+![t8](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t8.png)
+
+Prepare deployment which will use it (and deploy it):
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+
+```
+
+![t9](https://github.com/rgederin/k8s-sandbox/blob/master/k8s-basics-lohika/img/t9.png)
+
+Delete pvc namespace:
+
+```
+ODL1610003:task4 rgederin$ kubectl delete namespace/pvc-namespace
+namespace "pvc-namespace" deleteds
 ```
