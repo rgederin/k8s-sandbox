@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memleak
+  labels:
+    app: memleak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memleak
+  template:
+    metadata:
+      labels:
+        app: memleak
+    spec:
+      containers:
+      - image: stephanlindauer/docker-memory-leak
+        imagePullPolicy: IfNotPresent
+        name: memleak
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+
+
+        

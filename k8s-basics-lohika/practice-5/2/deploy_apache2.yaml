@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache
+  labels:
+    app: apache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+      - image: public.ecr.aws/lts/apache2:latest
+        imagePullPolicy: IfNotPresent
+        name: apache
+        env:
+          - name: TZ
+            value: UTC 
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+
+
+        

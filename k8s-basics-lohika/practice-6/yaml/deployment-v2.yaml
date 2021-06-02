@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-deployment-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: spring-app-v2
+  template:
+    metadata:
+      labels:
+        component: spring-app-v2
+    spec:
+      containers:
+        - name: spring-app
+          image: rgederin/spring-boot-k8s-config:0.0.3-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: spring-boot-configmap-v2
+                  key: DATABASE_HOST
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: spring-boot-configmap-v2
+                  key: DATABASE_PORT
