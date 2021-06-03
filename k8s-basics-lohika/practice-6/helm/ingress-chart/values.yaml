@@ -1,0 +1,13 @@
+defaultDatabaseHost: k8s-default-database-host
+defaultDatabasePort: k8s-default-database-port
+
+v1DatabaseHost: k8s-v1-database-host
+v1DatabasePort: k8s-v1-database-port
+
+v2DatabaseHost: k8s-v2-database-host
+v2DatabasePort: k8s-v2-database-port
+
+appVersion: default
+
+replicaCount: 1
+image: rgederin/spring-boot-k8s-config:0.0.3-SNAPSHOT
